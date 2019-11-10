@@ -20,9 +20,9 @@
 
     <actions>
         <!-- Add your actions here -->
-        <group id="MyPlugin.SampleMenu" class="com.pes.action.group.CustomDefaultActionGroup" text="Greeting" description="Greeting menu">
+        <group id="MyPlugin.SampleMenu" class="com.pes.action.group.AddPropertyActionGroup" text="Add Maven Property..." description="Add maven property menu">
             <add-to-group group-id="EditorPopupMenu" anchor="last"/>
-            <action id="Myplugin.Textboxes" class="com.pes.action.HelloAction" text="Hello" description="Says hello"/>
+            <action id="Myplugin.Textboxes" class="com.pes.action.AddPropertyAction" text="Add Maven Property..." description="Add new property to POM"/>
         </group>
     </actions>
 </idea-plugin>

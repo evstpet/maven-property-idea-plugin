@@ -7,14 +7,13 @@ import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.psi.PsiFile;
 
-public class CustomDefaultActionGroup extends DefaultActionGroup {
+public class AddPropertyActionGroup extends DefaultActionGroup {
     private static final String POM = "pom";
 
     @Override
     public void update(AnActionEvent e) {
         if (ActionPlaces.isPopupPlace(e.getPlace())) {
             boolean isPOM = isPom(e.getData(CommonDataKeys.PSI_FILE));
-            System.out.println(isPOM);
             e.getPresentation().setEnabledAndVisible(isPOM);
         }
     }
