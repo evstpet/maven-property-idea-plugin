@@ -28,13 +28,7 @@ public class AddPropertyAction extends AnAction {
 
             XmlFile data = (XmlFile) e.getData(CommonDataKeys.PSI_FILE);
 
-            XmlTag properties = getXmlDocumentSafety(data)
-                    .map(XmlDocument::getRootTag)
-                    .map(rootTag -> rootTag.findFirstSubTag("properties"))
-                    .orElseGet(() -> {
-                        System.out.println("No properties tag found");
-                        return null;
-                    });
+            XmlTag properties = lookUpPropertiesTag(data, e);
 
             if (properties != null) {
                 CommandProcessor.getInstance().executeCommand(
@@ -46,11 +40,49 @@ public class AddPropertyAction extends AnAction {
                                                                         false);
                             properties.addSubTag(property, false);
                         }),
-                        "Insert maven property",
+                        "Insert maven property int POM",
                         null
                 );
             }
         }
+    }
+
+    private XmlTag lookUpPropertiesTag(XmlFile file, AnActionEvent e) {
+        XmlTag properties = findPropertiesTag(file);
+
+        if (properties == null) {
+            properties = createPropertiesTag(file, e);
+        }
+
+        return properties;
+    }
+
+    private XmlTag findPropertiesTag(XmlFile file) {
+        return getXmlDocumentSafety(file)
+                .map(XmlDocument::getRootTag)
+                .map(rootTag -> rootTag.findFirstSubTag("properties"))
+                .orElse(null);
+    }
+
+    private XmlTag createPropertiesTag(XmlFile file, AnActionEvent e) {
+        getXmlDocumentSafety(file)
+                .map(XmlDocument::getRootTag)
+                .ifPresent(rootTag -> {
+                    CommandProcessor.getInstance().executeCommand(
+                            e.getProject(),
+                            () -> getApplication().runWriteAction(() -> {
+                                XmlTag properties = rootTag.createChildTag("properties",
+                                                                           rootTag.getNamespace(),
+                                                                           null,
+                                                                           false);
+                                rootTag.addSubTag(properties, false);
+                            }),
+                            "Insert properties tag int POM",
+                            null
+                    );
+                });
+
+        return findPropertiesTag(file);
     }
 
     private Optional<XmlDocument> getXmlDocumentSafety(XmlFile file) {
